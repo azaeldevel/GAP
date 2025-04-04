@@ -297,7 +297,7 @@ class Individuo:
         # EVALUACIÓN DE LA FUNCIÓN OBJETIVO CON LAS VARIABLES DEL INDIVIDUO Y
         # CÁLCULO DEL FITNESS
         # ----------------------------------------------------------------------
-        self.valor_funcion = funcion_objetivo(*self.valor_variables)
+        self.valor_funcion = funcion_objetivo(self.valor_variables)
         if optimizacion == "maximizar":
             self.fitness = self.valor_funcion
         elif optimizacion == "minimizar":
