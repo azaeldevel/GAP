@@ -9,6 +9,21 @@ import math
 import threading
 
 
+#
+def ackley_GA(dimension,range_length):
+  print("Ejecutando GA...")
+  individuo = OGA.Individuo(n_variables = dimension, limites_inf = [-range_length, -range_length], limites_sup = [range_length,range_length], verbose = True)
+  poblacion = OGA.Poblacion(n_individuos = number,n_variables  = dimension,limites_inf  = [-range_length, -range_length],limites_sup  = [range_length,range_length],verbose = False)
+  history_fitness = []
+  history = []
+  for i in range(0,100):
+	  print(f"Iteracion : {i}")
+	  poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
+	  #print(f"Individuo : {poblacion.mejor_individuo.fitness}")
+	  history_fitness.append(abs(poblacion.mejor_individuo.fitness))
+	  history.append(poblacion.mejor_individuo)
+	  poblacion.crear_nueva_generecion(metodo_seleccion = "tournament",elitismo = 0.1,prob_mut = 0.01, distribucion = "uniforme", verbose   = False, verbose_seleccion  = False,verbose_cruce      = False,verbose_mutacion   = False)
+
 a = 20
 b = 0.5
 c = math.pi * 1/2
@@ -18,7 +33,6 @@ range_length = 10 #32.768
 range_delta = 0.1
 number = 50
 
-          
 def ackley_r(data):
   d = len(data)
   z = 0
@@ -49,23 +63,6 @@ def ackley_v(x,y):
   #
   return value_a - value_b + a - np.exp(1)
   
-#
-def ackley_GA(dimension,range_length):
-  print("Ejecutando GA...")
-  individuo = OGA.Individuo(n_variables = dimension, limites_inf = [-range_length, -range_length], limites_sup = [range_length,range_length], verbose = True)
-  poblacion = OGA.Poblacion(n_individuos = number,n_variables  = dimension,limites_inf  = [-range_length, -range_length],limites_sup  = [range_length,range_length],verbose = False)
-  history_fitness = []
-  history = []
-  for i in range(0,100):
-	  print(f"Iteracion : {i}")
-	  poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
-	  #print(f"Individuo : {poblacion.mejor_individuo.fitness}")
-	  history_fitness.append(abs(poblacion.mejor_individuo.fitness))
-	  history.append(poblacion.mejor_individuo)
-	  poblacion.crear_nueva_generecion(metodo_seleccion = "tournament",elitismo = 0.1,prob_mut = 0.01, distribucion = "uniforme", verbose   = False, verbose_seleccion  = False,verbose_cruce      = False,verbose_mutacion   = False)
-
-  
-  
 print("Graficando funcion...")
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -79,8 +76,9 @@ print("Ploting...")
 ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show() 
 
+ackley_GA_t = threading.Thread(target=ackley_GA, args=(d,range_length))
+ackley_GA_t.start()
 
-ackley_GA(d,range_length)
 #plt.style.use('_mpl-gallery')
 # Make data
 #xs = []
