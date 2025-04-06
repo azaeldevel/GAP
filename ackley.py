@@ -8,10 +8,16 @@ from matplotlib import cm
 import math
 
 a = 20
-b = 0.2
-c = math.pi * 2
-#https://www.sfu.ca/~ssurjano/ackley.html                          
-def funcion_objetivo(data):
+b = 0.5
+c = math.pi * 1/2
+d = 2
+
+range_length = 10 #32.768
+range_delta = 0.1
+number = 50
+
+          
+def ackley_r(data):
   d = len(data)
   z = 0
   
@@ -30,28 +36,79 @@ def funcion_objetivo(data):
 		
   return valuea - valueb + a + math.exp(1)
 
+def ackley_v(x,y):
+  value_a = (np.pow(x,2) + np.pow(y,2))/d
+  value_a = -b * np.sqrt(value_a)
+  value_a = -a * np.exp(value_a)
+  #
+  value_b = np.cos(c * x) + np.cos(c * y)
+  value_b = value_b/d
+  value_b = np.exp(value_b)
+  #
+  return value_a - value_b + a - np.exp(1)
+  
+  
+  
+print("Graficando funcion...")
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+#
+X = np.arange(-range_length, range_length, range_delta)
+Y = np.arange(-range_length, range_length, range_delta)
+X, Y = np.meshgrid(X, Y)
+Z = ackley_v(X,Y) 
+
+print("Ploting...")
+#ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+#plt.show() 
+
+#
+print("Ejecutando GA...")
 individuo = OGA.Individuo(
                 n_variables = 2,
                 limites_inf = [0,100],
                 limites_sup = [0,100],
                 verbose     = True
             )
-            
-
-poblacion = OGA.Poblacion(n_individuos = 50,n_variables  = 2,limites_inf  = [-32.768, -32.768,],limites_sup  = [32.768,32.768],verbose = False)
+poblacion = OGA.Poblacion(n_individuos = number,n_variables  = 2,limites_inf  = [-range_length, -range_length,],limites_sup  = [range_length,range_length],verbose = False)
+history_fitness = []
 history = []
 for i in range(0,100):
-	#print(f"Iteracion : {i}")
-	poblacion.evaluar_poblacion(funcion_objetivo = funcion_objetivo,optimizacion = "minimizar", verbose= False)
-	print(f"Individuo : {poblacion.mejor_individuo.fitness}")
-	history.append(abs(poblacion.mejor_individuo.fitness))
+	print(f"Iteracion : {i}")
+	poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
+	#print(f"Individuo : {poblacion.mejor_individuo.fitness}")
+	history_fitness.append(abs(poblacion.mejor_individuo.fitness))
+	history.append(poblacion.mejor_individuo)
 	poblacion.crear_nueva_generecion(metodo_seleccion = "tournament",elitismo = 0.1,prob_mut = 0.01, distribucion = "uniforme", verbose   = False, verbose_seleccion  = False,verbose_cruce      = False,verbose_mutacion   = False)
 
-          
-          
-fig, ax = plt.subplots()             # Create a figure containing a single Axes.
-ax.plot(np.arange(0, len(history), 1), history)  # Plot some data on the Axes.
-plt.show()       
+
+plt.style.use('_mpl-gallery')
+
+# Make data
+np.random.seed(19680801)
+n = 100
+rng = np.random.default_rng()
+xs = []
+ys = []
+zs = []
+for i in range(0,len(history)):
+	xs.append(history[i].valor_variables[0])
+	ys.append(history[i].valor_variables[1])
+	zs.append(ackley_v(history[i].valor_variables[0],history[i].valor_variables[1]))
+print(f"longitud  xs = {len(xs)}")
+print(f"longitud  ys = {len(ys)}")
+print(f"longitud  zs = {len(zs)}")
+# Plot
+#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+ax.scatter(xs, ys, zs)
+
+ax.set(xticklabels=[],
+       yticklabels=[],
+       zticklabels=[])
+       
+       
+plt.show() 
+      
 
 
 

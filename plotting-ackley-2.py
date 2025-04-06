@@ -12,7 +12,7 @@ d = 2
 range_length = 5 #32.768
 range_delta = 0.1
 
-def ackley(x,y):
+def ackley_v(x,y):
   value_a = (np.pow(x,2) + np.pow(y,2))/d
   value_a = -b * np.sqrt(value_a)
   value_a = -a * np.exp(value_a)
@@ -32,7 +32,7 @@ ax = fig.add_subplot(projection='3d')
 X = np.arange(-range_length, range_length, range_delta)
 Y = np.arange(-range_length, range_length, range_delta)
 X, Y = np.meshgrid(X, Y)
-Z = ackley(X,Y) 
+Z = ackley_v(X,Y) 
 
 # Plot the surface.
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
