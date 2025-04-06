@@ -7,15 +7,15 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import math
 import threading
+import matplotlib.animation as animation
 
-
+history = []
 #
 def ackley_GA(dimension,range_length):
   print("Ejecutando GA...")
   individuo = OGA.Individuo(n_variables = dimension, limites_inf = [-range_length, -range_length], limites_sup = [range_length,range_length], verbose = True)
   poblacion = OGA.Poblacion(n_individuos = number,n_variables  = dimension,limites_inf  = [-range_length, -range_length],limites_sup  = [range_length,range_length],verbose = False)
   history_fitness = []
-  history = []
   for i in range(0,100):
 	  print(f"Iteracion : {i}")
 	  poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
@@ -73,28 +73,27 @@ X, Y = np.meshgrid(X, Y)
 Z = ackley_v(X,Y) 
 
 print("Ploting...")
-ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-plt.show() 
+#ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+#plt.show() 
 
 ackley_GA_t = threading.Thread(target=ackley_GA, args=(d,range_length))
 ackley_GA_t.start()
+ackley_GA_t.join()
 
-#plt.style.use('_mpl-gallery')
+plt.style.use('_mpl-gallery')
 # Make data
-#xs = []
-#ys = []
-#zs = []
-#for i in range(0,len(history)):
-	#xs.append(history[i].valor_variables[0])
-	#ys.append(history[i].valor_variables[1])
-	#zs.append(ackley_v(history[i].valor_variables[0],history[i].valor_variables[1]))
-#print(f"longitud  xs = {len(xs)}")
-#print(f"longitud  ys = {len(ys)}")
-#print(f"longitud  zs = {len(zs)}")
-
-#ax.scatter(xs, ys, zs)
-#ax.set(xticklabels=[], yticklabels=[], zticklabels=[]) 
-#plt.show() 
+xs = []
+ys = []
+zs = []
+for i in range(0,len(history)):
+	xs.append(history[i].valor_variables[0])
+	ys.append(history[i].valor_variables[1])
+	zs.append(ackley_v(history[i].valor_variables[0],history[i].valor_variables[1]))
+	
+for i in range(0,len(xs)):
+	ax.scatter(xs[i], ys[i], zs[i])
+ax.set(xticklabels=[], yticklabels=[], zticklabels=[]) 
+plt.show() 
       
 
 
