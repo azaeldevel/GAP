@@ -10,33 +10,16 @@ import threading
 import matplotlib.animation as animation
 
 history = []
-#
-def ackley_GA(dimension,range_length):
-  print("Ejecutando GA...")
-  individuo = OGA.Individuo(n_variables = dimension, limites_inf = [-range_length, -range_length], limites_sup = [range_length,range_length], verbose = True)
-  poblacion = OGA.Poblacion(n_individuos = number,n_variables  = dimension,limites_inf  = [-range_length, -range_length],limites_sup  = [range_length,range_length],verbose = False)
-  history_fitness = []
-  for i in range(0,100):
-	  print(f"Iteracion : {i}")
-	  poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
-	  #print(f"Individuo : {poblacion.mejor_individuo.fitness}")
-	  history_fitness.append(abs(poblacion.mejor_individuo.fitness))
-	  history.append(poblacion.mejor_individuo)
-	  poblacion.crear_nueva_generecion(metodo_seleccion = "tournament",elitismo = 0.1,prob_mut = 0.01, distribucion = "uniforme", verbose   = False, verbose_seleccion  = False,verbose_cruce      = False,verbose_mutacion   = False)
-
 a = 20
 b = 0.5
 c = math.pi * 1/2
 d = 2
-
+scatter_begin = 0
 range_length = 10 #32.768
 range_delta = 0.1
 number = 50
 
-def ackley_r(data):
-  d = len(data)
-  z = 0
-  
+def ackley_r(data): 
   valuea = 0
   for i in range(0,d - 1):
     valuea += math.pow(data[i],2)
@@ -63,6 +46,20 @@ def ackley_v(x,y):
   #
   return value_a - value_b + a - np.exp(1)
   
+#
+def ackley_GA(dimension,range_length):
+  print("Ejecutando GA...")
+  individuo = OGA.Individuo(n_variables = dimension, limites_inf = [-range_length, -range_length], limites_sup = [range_length,range_length], verbose = True)
+  poblacion = OGA.Poblacion(n_individuos = number,n_variables  = dimension,limites_inf  = [-range_length, -range_length],limites_sup  = [range_length,range_length],verbose = False)
+  history_fitness = []
+  for i in range(0,100):
+	  print(f"Iteracion : {i}")
+	  poblacion.evaluar_poblacion(funcion_objetivo = ackley_r,optimizacion = "minimizar", verbose= False)
+	  #print(f"Individuo : {poblacion.mejor_individuo.fitness}")
+	  history_fitness.append(abs(poblacion.mejor_individuo.fitness))
+	  history.append(poblacion.mejor_individuo)
+	  poblacion.crear_nueva_generecion(metodo_seleccion = "tournament",elitismo = 0.1,prob_mut = 0.01, distribucion = "uniforme", verbose   = False, verbose_seleccion  = False,verbose_cruce      = False,verbose_mutacion   = False)
+
 print("Graficando funcion...")
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -85,13 +82,13 @@ plt.style.use('_mpl-gallery')
 xs = []
 ys = []
 zs = []
-for i in range(0,len(history)):
-	xs.append(history[i].valor_variables[0])
-	ys.append(history[i].valor_variables[1])
-	zs.append(ackley_v(history[i].valor_variables[0],history[i].valor_variables[1]))
-	
-for i in range(0,len(xs)):
-	ax.scatter(xs[i], ys[i], zs[i])
+for i in range(scatter_begin,len(history)):
+  xs.append(history[i].valor_variables[0])
+  ys.append(history[i].valor_variables[1])
+  zs.append(ackley_v(history[i].valor_variables[0],history[i].valor_variables[1]))
+  
+for i in range(scatter_begin,len(xs)):
+  ax.scatter(xs[i],ys[i], zs[i])
 ax.set(xticklabels=[], yticklabels=[], zticklabels=[]) 
 plt.show() 
       
